@@ -7,22 +7,19 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from iniparse import ConfigParser
 
-env = 'dev'
-
 
 def get_connection_string():
     """Reads the Azure connection string from the config.properties file."""
     config = ConfigParser()
     config.read('config.properties')
     if config.get('DEFAULT', 'env') == 'prod':
-        env = 'prod'
-        return os.environ.get('CONNECTION_STRING')
+        return 'prod', os.environ.get('CONNECTION_STRING')
     else:
-        return config.get('DEFAULT', 'azure.connectionstring')
+        return 'dev', config.get('DEFAULT', 'azure.connectionstring')
 
 
 # Azure file share information
-connection_string = get_connection_string()
+env, connection_string = get_connection_string()
 share_name = "othello-data"
 main_folder = "upload"
 
