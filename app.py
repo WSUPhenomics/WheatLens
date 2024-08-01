@@ -7,12 +7,15 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from iniparse import ConfigParser
 
+env = 'dev'
+
 
 def get_connection_string():
     """Reads the Azure connection string from the config.properties file."""
     config = ConfigParser()
     config.read('config.properties')
     if config.get('DEFAULT', 'env') == 'prod':
+        env = 'prod'
         return os.environ.get('CONNECTION_STRING')
     else:
         return config.get('DEFAULT', 'azure.connectionstring')
@@ -60,7 +63,10 @@ def get_images():
         directory_client_lepton = share_client.get_directory_client(directory_name_lepton)
         directory_client_mlx = share_client.get_directory_client(directory_name_mlx)
 
-        prefix1 = f"date_{selected_date.strftime('%#d-%#m-%Y')}"
+        if env == 'prod':
+            prefix1 = f"date_{selected_date.strftime('%-d-%-m-%Y')}"
+        else:
+            prefix1 = f"date_{selected_date.strftime('%#d-%#m-%Y')}"
         prefix2 = f"pic_{selected_date.strftime('%Y-%m-%d')}"
         print("Search prefix1: ", prefix1)
         print("Search prefix2: ", prefix2)
@@ -113,7 +119,6 @@ def get_images():
         print("Pi camera no. of images: ", len(images_pi_camera))
         print("Lepton no. of images: ", len(images_lepton))
         print("MLX no. of images: ", len(images_mlx))
-
 
         # Download the image to a temporary location (optional)
         # This can be helpful for caching or manipulating the image before serving
