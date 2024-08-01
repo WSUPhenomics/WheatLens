@@ -64,8 +64,10 @@ def get_images():
         directory_client_mlx = share_client.get_directory_client(directory_name_mlx)
 
         if env == 'prod':
+            print("Date prefix adjusting for production environment")
             prefix1 = f"date_{selected_date.strftime('%-d-%-m-%Y')}"
         else:
+            print("Date prefix adjusting for development environment")
             prefix1 = f"date_{selected_date.strftime('%#d-%#m-%Y')}"
         prefix2 = f"pic_{selected_date.strftime('%Y-%m-%d')}"
         print("Search prefix1: ", prefix1)
